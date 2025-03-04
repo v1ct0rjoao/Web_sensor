@@ -19,7 +19,7 @@
   <header>
     <div class="funcionario">
       <img src="img\usuario-do-circulo.png" alt="foto de perfil">
-      <h3>João Victor</h3>
+      <h3></h3>
     </div>
 
     <div class="deslogar">
@@ -28,15 +28,138 @@
     </div>
   </header>
 
-  <main>
-    <div class="img_op">
-      <img id="img1" src="img\historico.png" alt="Imagem 1">
-      <img id="img2" src="img\detalhamento.png" alt="Imagem 2">
-      <img id="img3" src="img\agenda.png" alt="Imagem 3">
-      <img id="img4" src="img\documentacao.png" alt="Imagem 4">
-    </div>
-  </main>
+    <main>
+      <div class="geral">
+        <div class="container_op">
 
+          <div class="opcao">
+            <div id="dados">
+              <h3>Setor</h3>
+              <h3>Nome do Usuário</h3>
+            </div>
+            <div class="info-container">
+              <div class="info-item">
+                <img src="img/historico.png" alt="Histórico">
+                <h3>Histórico</h3>
+              </div>
+              <div class="info-item">
+                <img src="img/detalhamento.png" alt="Detalhamento de Máquina">
+                <h3>Detalhamento de Máquina</h3>
+              </div>
+              <div class="info-item">
+                <img src="img/agenda.png" alt="Agendar Manutenção">
+                <h3>Agendar Manutenção</h3>
+              </div>
+              <div class="info-item">
+                <img src="img/documentacao.png" alt="Registro de Manutenção">
+                <h3>Registro de Manutenção</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cont_perfil_maquina">
+          <div class="perfil">
+            <div class="perfil-info">
+              <p><strong>Nome</strong> | Cargo</p>
+              <p>Nível de acesso | adm</p>
+            </div>
+            <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="Usuário">
+          </div>
+          <div class="maquinas">
+            <div class="lista-maquinas" id="listaMaquinas"></div>
+            <!-- Botão "Adicionar Máquina" separado da lista -->
+            <div class="add-maquina">
+                <a href="cadastro_maquina.html">
+                    <img id="add_m" src="img/mais.png" alt="Adicionar Máquina">
+                </a>
+            </div>
+        </div>
+        </div>
+
+      </div>
+
+
+
+    </main>
+  </body>
+
+  </html>
+
+
+  <script>
+    // Pegando o nome do usuário corretamente
+    const user = JSON.parse(localStorage.getItem("user")); // Converte JSON para objeto
+
+    if (user && user.name) {
+      document.querySelector(".funcionario h3").textContent = user.name;
+    } else {
+      window.location.href = "login.html"; // Se não estiver logado, redireciona
+    }
+
+    function carregarMaquinas() {
+      const listaMaquinas = document.getElementById("listaMaquinas");
+      listaMaquinas.innerHTML = ""; // Limpa antes de carregar
+  
+      let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+  
+      maquinas.forEach((maquina, index) => {
+          const maquinaItem = document.createElement("div");
+          maquinaItem.classList.add("maquina-item");
+          maquinaItem.innerHTML = `
+              <p><strong>${maquina.nome} | ${maquina.codigo}</strong></p>
+              <p>${maquina.setor}</p>
+              <p><strong>ESTADO:</strong> ${maquina.estado}</p>
+              <button class="remover-btn" onclick="removerMaquina(${index})">🗑️ Remover</button>
+          `;
+          listaMaquinas.appendChild(maquinaItem);
+      });
+  
+      // Garante que o botão "Adicionar Máquina" sempre esteja presente
+      let addMaquina = document.querySelector(".add-maquina");
+      if (!document.contains(addMaquina)) {
+          addMaquina = document.createElement("div");
+          addMaquina.classList.add("add-maquina");
+          addMaquina.innerHTML = `
+              <a href="cadastro_maquina.html" style="display: block; width: 100%; height: 100%;">
+                  <img id="add_m" src="img/mais.png" alt="Adicionar Máquina">
+              </a>
+          `;
+      }
+      addMaquina.addEventListener("click", () => {
+          window.location.href = "cadastro_maquina.html";
+      });
+      listaMaquinas.appendChild(addMaquina);
+  }
+  
+  document.addEventListener("DOMContentLoaded", carregarMaquinas);
+  
+  function removerMaquina(index) {
+      let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+      maquinas.splice(index, 1);
+      localStorage.setItem("maquinas", JSON.stringify(maquinas));
+      carregarMaquinas(); // Atualiza a lista
+  }
+  
+  // Adiciona estilo para o botão de remover
+  const style = document.createElement("style");
+  style.innerHTML = `
+      .remover-btn {
+          background-color: #ff4d4d;
+          color: white;
+          border: none;
+          margin: 5px;
+          padding: 4px 9px;
+          border-radius: 5px;
+          cursor: pointer;
+          transition: background-color 0.3s ease;
+      }
+      .remover-btn:hover {
+          background-color: #cc0000;
+      }
+  `;
+  document.head.appendChild(style);
+  </script>
 </body>
 
 </html>

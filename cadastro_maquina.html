@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Máquina</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <header>
+        <div class="funcionario">
+            <img src="img\usuario-do-circulo.png" alt="foto de perfil">
+            <h3></h3>
+        </div>
+
+        <div class="deslogar">
+            <h3>Voltar</h3>
+            <img src="img/voltar.png" alt="voltar">
+        </div>
+    </header>
+
+    <main>
+        <div class="formulario-container">
+            <h1 class="titulo-form">Cadastrar Máquina</h1>
+            <form id="formMaquina">
+                <div class="form-group">
+                    <label for="nome">Nome da Máquina:</label>
+                    <input type="text" id="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="codigo">Código de Identificação:</label>
+                    <input type="text" id="codigo" required>
+                </div>
+                <div class="form-group">
+                    <label for="setor">Setor:</label>
+                    <input type="text" id="setor" required>
+                </div>
+                <div class="form-group">
+                    <label for="fabricante">Fabricante e Modelo:</label>
+                    <input type="text" id="fabricante" required>
+                </div>
+                <div class="form-group">
+                    <label for="serie">Número de Série:</label>
+                    <input type="text" id="serie" required>
+                </div>
+                <div class="form-group">
+                    <label for="data">Data de Instalação:</label>
+                    <input type="date" id="data" required>
+                </div>
+                <div class="form-group">
+                    <label for="potencia">Potência e Voltagem:</label>
+                    <input type="text" id="potencia" required>
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado:</label>
+                    <select id="estado">
+                        <option value="Em Operação">Em Operação</option>
+                        <option value="Manutenção">Manutenção</option>
+                        <option value="Inativa">Inativa</option>
+                    </select>
+                </div>
+                <button id="botaoCadastrarMaquina" type="submit">Cadastrar</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("formMaquina").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            const novaMaquina = {
+                nome: document.getElementById("nome").value,
+                codigo: document.getElementById("codigo").value,
+                setor: document.getElementById("setor").value,
+                fabricante: document.getElementById("fabricante").value,
+                serie: document.getElementById("serie").value,
+                data: document.getElementById("data").value,
+                potencia: document.getElementById("potencia").value,
+                estado: document.getElementById("estado").value
+            };
+
+            let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+            maquinas.push(novaMaquina);
+
+            localStorage.setItem("maquinas", JSON.stringify(maquinas));
+
+            window.location.href = "index.html";
+        });
+
+        document.querySelector(".deslogar").addEventListener("click", function () {
+            window.history.back(); // Volta para a página anterior
+            // Se quiser sempre redirecionar para index.html, use:
+            // window.location.href = "index.html";
+        });
+    </script>
+</body>
+
+</html>
