@@ -1,0 +1,6 @@
+Estado de Maquina:
+Estado Previsto: repouso
+Estado Previsto: velocidade 3
+Estado Previsto: velocidade 2
+Estado Previsto: velocidade 1
+Estado Previsto: repouso

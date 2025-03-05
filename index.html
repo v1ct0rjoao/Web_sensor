@@ -88,77 +88,103 @@
 
 
   <script>
-    // Pegando o nome do usuário corretamente
-    const user = JSON.parse(localStorage.getItem("user")); // Converte JSON para objeto
+     // Pegando o nome do usuário corretamente
+     const user = JSON.parse(localStorage.getItem("user")); // Converte JSON para objeto
 
-    if (user && user.name) {
-      document.querySelector(".funcionario h3").textContent = user.name;
-    } else {
-      window.location.href = "login.html"; // Se não estiver logado, redireciona
-    }
-
-    function carregarMaquinas() {
-      const listaMaquinas = document.getElementById("listaMaquinas");
-      listaMaquinas.innerHTML = ""; // Limpa antes de carregar
-  
-      let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
-  
-      maquinas.forEach((maquina, index) => {
-          const maquinaItem = document.createElement("div");
-          maquinaItem.classList.add("maquina-item");
-          maquinaItem.innerHTML = `
-              <p><strong>${maquina.nome} | ${maquina.codigo}</strong></p>
-              <p>${maquina.setor}</p>
-              <p><strong>ESTADO:</strong> ${maquina.estado}</p>
-              <button class="remover-btn" onclick="removerMaquina(${index})">🗑️ Remover</button>
-          `;
-          listaMaquinas.appendChild(maquinaItem);
-      });
-  
-      // Garante que o botão "Adicionar Máquina" sempre esteja presente
-      let addMaquina = document.querySelector(".add-maquina");
-      if (!document.contains(addMaquina)) {
-          addMaquina = document.createElement("div");
-          addMaquina.classList.add("add-maquina");
-          addMaquina.innerHTML = `
-              <a href="cadastro_maquina.html" style="display: block; width: 100%; height: 100%;">
-                  <img id="add_m" src="img/mais.png" alt="Adicionar Máquina">
-              </a>
-          `;
-      }
-      addMaquina.addEventListener("click", () => {
-          window.location.href = "cadastro_maquina.html";
-      });
-      listaMaquinas.appendChild(addMaquina);
-  }
-  
-  document.addEventListener("DOMContentLoaded", carregarMaquinas);
-  
-  function removerMaquina(index) {
-      let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
-      maquinas.splice(index, 1);
-      localStorage.setItem("maquinas", JSON.stringify(maquinas));
-      carregarMaquinas(); // Atualiza a lista
-  }
-  
-  // Adiciona estilo para o botão de remover
-  const style = document.createElement("style");
-  style.innerHTML = `
-      .remover-btn {
-          background-color: #ff4d4d;
-          color: white;
-          border: none;
-          margin: 5px;
-          padding: 4px 9px;
-          border-radius: 5px;
-          cursor: pointer;
-          transition: background-color 0.3s ease;
-      }
-      .remover-btn:hover {
-          background-color: #cc0000;
-      }
-  `;
-  document.head.appendChild(style);
+     if (user && user.name) {
+       document.querySelector(".funcionario h3").textContent = user.name;
+     } else {
+       window.location.href = "login.html"; // Se não estiver logado, redireciona
+     }
+ 
+     // Função para carregar as máquinas
+     function carregarMaquinas() {
+       const listaMaquinas = document.getElementById("listaMaquinas");
+       listaMaquinas.innerHTML = ""; // Limpa antes de carregar
+ 
+       let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+ 
+       maquinas.forEach((maquina, index) => {
+         const maquinaItem = document.createElement("div");
+         maquinaItem.classList.add("maquina-item");
+         maquinaItem.innerHTML = `
+           <p><strong>${maquina.nome} | ${maquina.codigo}</strong></p>
+           <p>${maquina.setor}</p>
+           <p><strong>ESTADO:</strong> ${maquina.estado}</p>
+           <button class="remover-btn" onclick="removerMaquina(${index})">🗑️ Remover</button>
+         `;
+         listaMaquinas.appendChild(maquinaItem);
+       });
+ 
+       // Garante que o botão "Adicionar Máquina" sempre esteja presente
+       let addMaquina = document.querySelector(".add-maquina");
+       if (!document.contains(addMaquina)) {
+         addMaquina = document.createElement("div");
+         addMaquina.classList.add("add-maquina");
+         addMaquina.innerHTML = `
+           <a href="cadastro_maquina.html">
+             <img id="add_m" src="img/mais.png" alt="Adicionar Máquina">
+           </a>
+         `;
+       }
+       addMaquina.addEventListener("click", () => {
+         window.location.href = "cadastro_maquina.html";
+       });
+       listaMaquinas.appendChild(addMaquina);
+     }
+ 
+     // Função para remover uma máquina
+     function removerMaquina(index) {
+       let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+       maquinas.splice(index, 1);
+       localStorage.setItem("maquinas", JSON.stringify(maquinas));
+       carregarMaquinas(); // Atualiza a lista
+     }
+ 
+     // Função para atualizar o estado da máquina com base no arquivo
+     async function atualizarEstadoMaquina() {
+       try {
+         const response = await fetch('mudancas_estado.txt');
+         const data = await response.text();
+         const linhas = data.split('\n');
+         const ultimoEstado = linhas[linhas.length - 2].replace("Estado Previsto: ", "").trim(); // Pega a última linha válida
+ 
+         // Atualizar o estado da máquina no localStorage
+         let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
+         if (maquinas.length > 0) {
+           maquinas[0].estado = ultimoEstado; // Atualiza o estado da primeira máquina (ou lógica personalizada)
+           localStorage.setItem("maquinas", JSON.stringify(maquinas));
+           carregarMaquinas(); // Atualiza a exibição
+         }
+       } catch (error) {
+         console.error("Erro ao ler o arquivo de mudanças de estado:", error);
+       }
+     }
+ 
+     // Atualizar o estado da máquina a cada 5 segundos
+     setInterval(atualizarEstadoMaquina, 5000);
+ 
+     // Carregar as máquinas ao abrir a página
+     document.addEventListener("DOMContentLoaded", carregarMaquinas);
+ 
+     // Adiciona estilo para o botão de remover
+     const style = document.createElement("style");
+     style.innerHTML = `
+       .remover-btn {
+         background-color: #ff4d4d;
+         color: white;
+         border: none;
+         margin: 5px;
+         padding: 4px 9px;
+         border-radius: 5px;
+         cursor: pointer;
+         transition: background-color 0.3s ease;
+       }
+       .remover-btn:hover {
+         background-color: #cc0000;
+       }
+     `;
+     document.head.appendChild(style);
   </script>
 </body>
 

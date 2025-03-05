@@ -59,14 +59,6 @@
                     <label for="potencia">Potência e Voltagem:</label>
                     <input type="text" id="potencia" required>
                 </div>
-                <div class="form-group">
-                    <label for="estado">Estado:</label>
-                    <select id="estado">
-                        <option value="Em Operação">Em Operação</option>
-                        <option value="Manutenção">Manutenção</option>
-                        <option value="Inativa">Inativa</option>
-                    </select>
-                </div>
                 <button id="botaoCadastrarMaquina" type="submit">Cadastrar</button>
             </form>
         </div>
@@ -75,7 +67,7 @@
     <script>
         document.getElementById("formMaquina").addEventListener("submit", function (event) {
             event.preventDefault();
-
+        
             const novaMaquina = {
                 nome: document.getElementById("nome").value,
                 codigo: document.getElementById("codigo").value,
@@ -84,14 +76,14 @@
                 serie: document.getElementById("serie").value,
                 data: document.getElementById("data").value,
                 potencia: document.getElementById("potencia").value,
-                estado: document.getElementById("estado").value
+                estado: "Em Operação" // Estado inicial padrão
             };
-
+        
             let maquinas = JSON.parse(localStorage.getItem("maquinas")) || [];
             maquinas.push(novaMaquina);
-
+        
             localStorage.setItem("maquinas", JSON.stringify(maquinas));
-
+        
             window.location.href = "index.html";
         });
 
